@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "perspectv"
+version = "0.1.0"
+description = "LLM-powered summary of a business website"
+authors = ["Jason Stitt"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11"
+requests = "==2.*"
+sqlalchemy = "==2.*"
+duckduckgo-search = "==5.*"
+
+[tool.poetry.scripts]
+perspectv = "perspectv.cli:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
