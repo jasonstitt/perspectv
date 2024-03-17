@@ -11,6 +11,7 @@ python = ">=3.11"
 requests = "==2.*"
 sqlalchemy = "==2.*"
 duckduckgo-search = "==5.*"
+click = "==8.*"
 
 [tool.poetry.scripts]
 perspectv = "perspectv.cli:main"
