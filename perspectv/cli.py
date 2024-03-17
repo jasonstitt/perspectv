@@ -17,29 +17,51 @@ def main(domain, dbfile, model_summary):
     print(f"Summarizing {domain}...")
     engine = create_engine(f"sqlite:///{dbfile}")
     model.Base.metadata.create_all(engine)
+    run_discover(engine, domain)
+    run_scrape(engine)
+    run_extract(engine, model_summary)
+
+
+def run_discover(engine, domain):
     with Session(engine) as session:
         # Fetch URLs we already found
         urls = session.query(model.Url).all()
         # Discover URLs using search
         if not urls:
+            print(f"Discovering URLs for {domain}...")
             for url in search.fetch_urls(domain):
                 url_obj = model.Url(original_url=url)
                 session.add(url_obj)
-                urls.append(url_obj)
             session.commit()
-        print(f"Found {len(urls)} URLs")
+
+
+def run_scrape(engine):
+    with Session(engine) as session:
         # Scrape all the pages that haven't been scraped yet
+        urls = (
+            session.query(model.Url)
+            .filter(model.Url.final_url.is_(None), model.Url.error.is_(None))
+            .all()
+        )
+        # Dedupe the URLs
         by_original = {url.original_url: url for url in urls}
-        to_scrape = [url.original_url for url in urls if not url.final_url]
-        print(f"Scraping {len(to_scrape)} URLs")
-        results = scrape.scrape(to_scrape)
+        results = scrape.scrape(by_original.keys())
+        print(f"Scraped {len(results)} pages")
         # Save the final urls so we have the redirect map
         for result in results:
             url = by_original[result.original_url]
             url.final_url = result.final_url
+            url.error = result.error
+            if not result.error:
+                page = model.Page(url=result.final_url, body=result.body, extract=None)
+                session.add(page)
             session.commit()
-        # Extract the page contents
-        by_final = {result.final_url: result for result in results if result.final_url}
-        for final_url, result in by_final.items():
-            summary = llm.run_prompt("page_extract", model_summary, text=result.body)
-            print(final_url, summary)
+
+
+def run_extract(engine, model_summary):
+    with Session(engine) as session:
+        pages = session.query(model.Page).filter(model.Page.extract.is_(None)).all()
+        for page in pages:
+            summary = llm.run_prompt("page_extract", model_summary, text=page.body)
+            page.extract = summary
+            session.commit()
