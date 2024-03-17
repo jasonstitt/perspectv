@@ -1,0 +1,9 @@
+Extract the content of this web page. Since this is raw text from a web page, ignore
+the navigation, headers, footers, buttons, and other non-content elements.
+Just output the content from the page.
+
+Content:
+--------------------
+{text}
+--------------------
+Summary:
