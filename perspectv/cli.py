@@ -1,7 +1,10 @@
 import click
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
+import markdown2
 from . import search, model, scrape, llm
+
+report_names = ["summary", "products", "swot", "software"]
 
 
 @click.command()
@@ -14,16 +17,20 @@ from . import search, model, scrape, llm
 )
 @click.option(
     "--model-report",
-    default="google/gemini-pro", #"anthropic/claude-3-opus",
+    default="anthropic/claude-3-opus",
     help="Model for report generation (large context)",
 )
-def main(domain, dbfile, model_extract, model_report):
+@click.option(
+    "--output", default="perspectv-report.html", help="Filename for HTML output"
+)
+def main(domain, dbfile, model_extract, model_report, output):
     engine = create_engine(f"sqlite:///{dbfile}")
     model.Base.metadata.create_all(engine)
     run_discover(engine, domain)
     run_scrape(engine)
     run_extract(engine, model_extract)
     run_reports(engine, model_report)
+    run_html(engine, output)
 
 
 def run_discover(engine, domain):
@@ -81,10 +88,21 @@ def run_reports(engine, model_report):
         existing_reports = set(x.name for x in reports)
         pages = session.query(model.Page).all()
         text = "\n------\n".join(page.extract for page in pages)
-        for name in ["summary", "products", "swot", "software"]:
+        for name in report_names:
             if name in existing_reports:
                 continue
             body = llm.run_prompt(f"report_{name}", model_report, text=text)
             session.add(model.Report(name=name, body=body))
             session.commit()
             print(f"Generated report {name}")
+
+
+def run_html(engine, filename):
+    with Session(engine) as session:
+        reports = session.query(model.Report).all()
+    reports_lookup = {x.name: x.body for x in reports}
+    reports_md = "\n\n".join(reports_lookup[name] for name in report_names)
+    reports_html = markdown2.markdown(reports_md)
+    with open(filename, "w") as outfile:
+        outfile.write(reports_html)
+    print(f"Wrote {filename}")

@@ -433,6 +433,22 @@ htmlsoup = ["BeautifulSoup4"]
 source = ["Cython (>=3.0.7)"]
 
 [[package]]
+name = "markdown2"
+version = "2.4.13"
+description = "A fast and complete Python implementation of Markdown"
+optional = false
+python-versions = ">=3.5, <4"
+files = [
+    {file = "markdown2-2.4.13-py2.py3-none-any.whl", hash = "sha256:855bde5cbcceb9beda7c80efdf7f406c23e6079172c497fcfce22fdce998e892"},
+    {file = "markdown2-2.4.13.tar.gz", hash = "sha256:18ceb56590da77f2c22382e55be48c15b3c8f0c71d6398def387275e6c347a9f"},
+]
+
+[package.extras]
+all = ["pygments (>=2.7.3)", "wavedrom"]
+code-syntax-highlighting = ["pygments (>=2.7.3)"]
+wavedrom = ["wavedrom"]
+
+[[package]]
 name = "playwright"
 version = "1.42.0"
 description = "A high-level API to automate web browsers"
@@ -618,5 +634,5 @@ zstd = ["zstandard (>=0.18.0)"]
 
 [metadata]
 lock-version = "2.0"
-python-versions = ">=3.11"
-content-hash = "116951c2aaf88807b3fd6230f7f6c90c1d1429f11a2919d977359a92e18bec8c"
+python-versions = ">=3.11,<4"
+content-hash = "23d66cc331206cc7c7b425b6383c88b06d85a5a7347fc58dde81af8852957ba1"

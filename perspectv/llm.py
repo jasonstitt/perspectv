@@ -11,6 +11,7 @@ def openrouter(model, text):
     token = os.getenv("OPENROUTER_API_KEY")
     response = requests.post(
         url="https://openrouter.ai/api/v1/chat/completions",
+        timeout=120,
         headers={
             "Authorization": f"Bearer {token}",
         },

@@ -25,7 +25,7 @@ class Page(Base):
 
 
 class Report(Base):
-    """ Generated reports """
+    """Generated reports"""
 
     __tablename__ = "report"
     name = mapped_column(String, primary_key=True)
