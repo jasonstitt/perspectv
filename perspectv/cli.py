@@ -1,7 +1,6 @@
 import click
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
 from . import search, model, scrape, llm
 
 
@@ -15,7 +14,7 @@ from . import search, model, scrape, llm
 )
 @click.option(
     "--model-report",
-    default="google/gemini-pro",
+    default="google/gemini-pro", #"anthropic/claude-3-opus",
     help="Model for report generation (large context)",
 )
 def main(domain, dbfile, model_extract, model_report):
@@ -78,12 +77,14 @@ def run_extract(engine, model_extract):
 
 def run_reports(engine, model_report):
     with Session(engine) as session:
+        reports = session.query(model.Report).all()
+        existing_reports = set(x.name for x in reports)
         pages = session.query(model.Page).all()
         text = "\n------\n".join(page.extract for page in pages)
-    report_names = ["summary", "products", "swot", "software"]
-    reports = [
-        llm.run_prompt(f"report_{name}", model_report, text=text)
-        for name in report_names
-    ]
-    for report in reports:
-        print(report)
+        for name in ["summary", "products", "swot", "software"]:
+            if name in existing_reports:
+                continue
+            body = llm.run_prompt(f"report_{name}", model_report, text=text)
+            session.add(model.Report(name=name, body=body))
+            session.commit()
+            print(f"Generated report {name}")

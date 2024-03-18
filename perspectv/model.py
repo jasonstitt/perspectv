@@ -22,3 +22,11 @@ class Page(Base):
     url = mapped_column(String, primary_key=True)
     body = mapped_column(String)
     extract = mapped_column(String)
+
+
+class Report(Base):
+    """ Generated reports """
+
+    __tablename__ = "report"
+    name = mapped_column(String, primary_key=True)
+    body = mapped_column(String)
