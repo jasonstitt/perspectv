@@ -1,0 +1,16 @@
+Create a list of specific ways that our company can use software and data to 
+improve our product offerings, service, and internal operations. Be specific and detailed
+and explain how each solution would actually work. Include as many quality ideas as possible.
+   
+Below is summaries of the pages on our company's website. Use them to inform your strategy
+but also use expert industry knowledge.
+
+Use markdown formatting for the report, including using "#" for main headings, "##" for sub headings and "###" for sub-sub-headings.
+
+Start with the main heading "Software & Data"
+
+Summaries:
+-------
+{text}
+-------
+Report:

@@ -1,0 +1,14 @@
+Based on these summaries of the pages on a company's website, write a comprehensive report about each of the company's products.
+Be thorough. Spend at least 1-2 paragraphs on each product. Mention what its benefits and customers are.
+
+If there isn't enough information about something, say so.
+
+Use markdown formatting for the report, including using "#" for main headings, "##" for sub headings and "###" for sub-sub-headings.
+
+Start with the main heading "Products" and then have a sub-heading for each product.
+
+Web pages:
+-------
+{text}
+-------
+Report:

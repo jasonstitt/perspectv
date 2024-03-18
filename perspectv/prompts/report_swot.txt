@@ -1,0 +1,20 @@
+Based on these summaries from a company's website as well as expert industry knowledge, write a SWOT
+(Strengths, Weaknesses, Opportunities, Threats) analysis. Include at least 3 points for each category. 
+Focus on the company and its products, not the quality of the website or its content.
+We want a SWOT of the company, not the website.
+
+If there isn't enough information about something, say so.
+
+Use markdown formatting for the report, including using "#" for main headings, "##" for sub headings and "###" for sub-sub-headings.
+
+Start with the company's name as a main heading. Sub headings should be:
+* Strengths
+* Weaknesses
+* Opportunities
+* Threats
+
+Web pages:
+-------
+{text}
+-------
+Report:

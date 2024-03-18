@@ -77,7 +77,7 @@ def run_reports(engine, model_report):
     with Session(engine) as session:
         pages = session.query(model.Page).all()
         text = "\n------\n".join(page.extract for page in pages)
-    report_names = ["summary"]
+    report_names = ["summary", "products", "swot", "software"]
     reports = [
         llm.run_prompt(f"report_{name}", model_report, text=text)
         for name in report_names

@@ -1,7 +1,8 @@
 Write a comprehensive report about this company's core business and products. Use the below extracts from the pages of
 the company's website in addition to your expert industry knowledge. Only take information about the company from these
-extracts and don't invent anything. If there isn't enough information about something, say so. Be thorough and include
-what the company does, what products it offers, and what differentiates it.
+extracts and don't invent anything. Be thorough and include what the company does, what products it offers, and what differentiates it.
+
+If there isn't enough information about something, say so.
 
 Use markdown formatting for the report, including using "#" for main headings, "##" for sub headings and "###" for sub-sub-headings.
 
