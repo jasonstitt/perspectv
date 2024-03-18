@@ -16,10 +16,9 @@ from . import search, model, scrape, llm
 @click.option(
     "--model-report",
     default="google/gemini-pro",
-    help="Model for report generation (high strength, high cost)",
+    help="Model for report generation (large context)",
 )
 def main(domain, dbfile, model_extract, model_report):
-    print(f"Summarizing {domain}...")
     engine = create_engine(f"sqlite:///{dbfile}")
     model.Base.metadata.create_all(engine)
     run_discover(engine, domain)
@@ -49,19 +48,22 @@ def run_scrape(engine):
             .filter(model.Url.final_url.is_(None), model.Url.error.is_(None))
             .all()
         )
-        # Dedupe the URLs
+        # Scrape the discovered URLs
         by_original = {url.original_url: url for url in urls}
         results = scrape.scrape(by_original.keys())
         print(f"Scraped {len(results)} pages")
         # Save the final urls so we have the redirect map
+        existing_pages = session.query(model.Page).all()
+        seen_final_urls = set(x.url for x in existing_pages)
         for result in results:
             url = by_original[result.original_url]
             url.final_url = result.final_url
             url.error = result.error
-            if not result.error:
+            if not result.error and result.final_url not in seen_final_urls:
                 page = model.Page(url=result.final_url, body=result.body)
                 session.add(page)
-            session.commit()
+                seen_final_urls.add(result.final_url)
+                session.commit()
 
 
 def run_extract(engine, model_extract):
@@ -69,6 +71,7 @@ def run_extract(engine, model_extract):
         pages = session.query(model.Page).filter(model.Page.extract.is_(None)).all()
         for page in pages:
             summary = llm.run_prompt("page_extract", model_extract, text=page.body)
+            print(f"Extracted {page.url}")
             page.extract = summary
             session.commit()
 
