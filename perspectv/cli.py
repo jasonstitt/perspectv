@@ -9,22 +9,22 @@ from . import search, model, scrape, llm
 @click.argument("domain")
 @click.option("--dbfile", default="perspectv.db", help="Filename for sqlite database")
 @click.option(
-    "--model-summary",
+    "--model-extract",
     default="google/gemini-pro",
-    help="Model for summarization (low cost, med strength)",
+    help="Model for extracting text (low cost, med strength)",
 )
 @click.option(
     "--model-report",
     default="google/gemini-pro",
     help="Model for report generation (high strength, high cost)",
 )
-def main(domain, dbfile, model_summary, model_report):
+def main(domain, dbfile, model_extract, model_report):
     print(f"Summarizing {domain}...")
     engine = create_engine(f"sqlite:///{dbfile}")
     model.Base.metadata.create_all(engine)
     run_discover(engine, domain)
     run_scrape(engine)
-    run_extract(engine, model_summary)
+    run_extract(engine, model_extract)
     run_reports(engine, model_report)
 
 
@@ -64,11 +64,11 @@ def run_scrape(engine):
             session.commit()
 
 
-def run_extract(engine, model_summary):
+def run_extract(engine, model_extract):
     with Session(engine) as session:
         pages = session.query(model.Page).filter(model.Page.extract.is_(None)).all()
         for page in pages:
-            summary = llm.run_prompt("page_extract", model_summary, text=page.body)
+            summary = llm.run_prompt("page_extract", model_extract, text=page.body)
             page.extract = summary
             session.commit()
 
